@@ -33,7 +33,16 @@ class _DashboardViewState extends State<DashboardView> {
       return jsonResponse.map<AcaraResponse>((acara) {
         // ✅ Print URL gambar setiap acara
         print('Image URL: ${acara['image']}');
-        return AcaraResponse.fromJson(acara);
+        // ✅ Gabungkan base URL dengan path gambar
+        String baseUrl =
+            'http://127.0.0.1:8000/storage/acaras'; // Ganti dengan URL backend Anda jika berbeda
+        String fullImageUrl = '$baseUrl${acara['image']}';
+
+        // ✅ Print URL gambar yang akan ditampilkan
+        print('Full Image URL: $fullImageUrl');
+
+        // ✅ Pastikan Anda menggunakan fullImageUrl saat membuat AcaraResponse
+        return AcaraResponse.fromJson(acara..['image'] = fullImageUrl);
       }).toList();
     } else {
       throw Exception('Failed to load acara');
