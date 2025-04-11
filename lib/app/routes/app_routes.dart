@@ -8,7 +8,7 @@ abstract class Routes {
   static const REGISTER = _Paths.REGISTER;
   static const DASHBOARD = _Paths.DASHBOARD;
   static const PROFILE = _Paths.PROFILE;
-}
+  }
 
 abstract class _Paths {
   _Paths._();

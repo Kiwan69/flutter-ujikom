@@ -18,9 +18,9 @@ class RegisterView extends GetView<RegisterController> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              HexColor('#FF9A8B'),
-              HexColor('#FF6A88'),
-              HexColor('#FF99AC'),
+              HexColor('#2193b0'), // biru muda
+              HexColor('#6dd5ed'), // biru terang
+              HexColor('#1e3c72'), // biru gelap
             ],
           ),
         ),
@@ -30,7 +30,7 @@ class RegisterView extends GetView<RegisterController> {
               Padding(
                 padding: const EdgeInsets.only(top: 70.0),
                 child: Lottie.network(
-                  'https://assets6.lottiefiles.com/packages/lf20_j1adxtyb.json', // Animasi baru
+                  'https://assets6.lottiefiles.com/packages/lf20_j1adxtyb.json',
                   height: 200,
                 ),
               ),
@@ -80,7 +80,7 @@ class RegisterView extends GetView<RegisterController> {
                             controller.registerNow();
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: HexColor('#FF6A88'),
+                            backgroundColor: HexColor('#1e3c72'), // biru gelap
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20),
                             ),
@@ -120,7 +120,7 @@ class RegisterView extends GetView<RegisterController> {
         controller: controller,
         obscureText: isPassword,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.pinkAccent),
+          prefixIcon: Icon(icon, color: Colors.blueAccent),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
           ),

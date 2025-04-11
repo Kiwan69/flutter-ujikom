@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart'; // Import intl
 import 'package:project_ujikom/app/data/acara_response.dart';
 
 class DetailAcaraView extends StatelessWidget {
@@ -61,7 +62,7 @@ class DetailAcaraView extends StatelessWidget {
                 ),
                 const SizedBox(width: 5),
                 Text(
-                  '${acara.tanggal.toLocal()}'.split(' ')[0],
+                  DateFormat('d M y').format(acara.tanggal), // Gunakan 'y' kecil untuk tahun
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
@@ -71,28 +72,68 @@ class DetailAcaraView extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Anda bisa menambahkan detail lain dari AcaraResponse di sini
-            // Contoh:
-            // Row(
-            //   children: [
-            //     const Icon(
-            //       Icons.location_on,
-            //       size: 16,
-            //       color: Colors.grey,
-            //     ),
-            //     const SizedBox(width: 5),
-            //     Text(
-            //       acara.stadion, // Asumsi ada properti stadion
-            //       style: const TextStyle(
-            //         fontSize: 16,
-            //         color: Colors.grey,
-            //       ),
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 10),
+            // Tampilkan Waktu Mulai
+            Row(
+              children: [
+                const Icon(
+                  Icons.schedule,
+                  size: 16,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  'Mulai: ${acara.waktuMulai}', // Format HH:mm sudah di dashboard
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
 
-            // Tambahkan detail lain sesuai kebutuhan Anda
+            // Tampilkan Waktu Selesai
+            Row(
+              children: [
+                const Icon(
+                  Icons.schedule_outlined,
+                  size: 16,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  'Selesai: ${acara.waktuSelesai}', // Format HH:mm sudah di dashboard
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // Tampilkan ID Stadion
+            Row(
+              children: [
+                const Icon(
+                  Icons.location_on,
+                  size: 16,
+                  color: Colors.grey,
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  'ID Stadion: ${acara.idStadion}',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+
+            // Anda bisa menambahkan detail lain sesuai kebutuhan Anda
           ],
         ),
       ),

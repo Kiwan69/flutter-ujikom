@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:lottie/lottie.dart';
 import 'package:project_ujikom/app/modules/register/views/register_view.dart';
-
 import '../controllers/login_controller.dart';
 
 class LoginView extends GetView<LoginController> {
@@ -19,9 +18,9 @@ class LoginView extends GetView<LoginController> {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              HexColor('#FF9A8B'),
-              HexColor('#FF6A88'),
-              HexColor('#FF99AC'),
+              HexColor('#2193b0'), // biru muda
+              HexColor('#6dd5ed'), // biru cerah
+              HexColor('#1e3c72'), // biru tua
             ],
           ),
         ),
@@ -82,7 +81,7 @@ class LoginView extends GetView<LoginController> {
                               controller.loginNow();
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: HexColor('#FF6A88'),
+                              backgroundColor: HexColor('#1e3c72'),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20),
                               ),
@@ -102,9 +101,9 @@ class LoginView extends GetView<LoginController> {
                           onPressed: () {
                             Get.to(() => RegisterView());
                           },
-                          child: Text(
+                          child: const Text(
                             "Don't have an account? Register",
-                            style: TextStyle(fontSize: 14, color: Colors.pinkAccent),
+                            style: TextStyle(fontSize: 14, color: Colors.lightBlueAccent),
                           ),
                         ),
                       ],
@@ -133,7 +132,7 @@ class LoginView extends GetView<LoginController> {
         controller: controller,
         obscureText: isPassword,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.pinkAccent),
+          prefixIcon: Icon(icon, color: Colors.blueAccent),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
           ),

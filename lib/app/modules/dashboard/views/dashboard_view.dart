@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project_ujikom/app/data/acara_response.dart';
+import 'package:project_ujikom/app/modules/dashboard/views/dashboard_detail_view.dart';
+import 'package:project_ujikom/app/modules/dashboard/views/profile_view.dart'; 
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -13,11 +15,14 @@ class DashboardView extends StatefulWidget {
 
 class _DashboardViewState extends State<DashboardView> {
   late Future<List<AcaraResponse>> futureAcara;
+  int _selectedIndex = 0;
+  late Widget _body; // Widget untuk menyimpan body yang aktif
 
   @override
   void initState() {
     super.initState();
     futureAcara = fetchAcara();
+    _body = _buildAcaraBody(); // Inisialisasi body dengan halaman acara
   }
 
   Future<List<AcaraResponse>> fetchAcara() async {
@@ -49,37 +54,46 @@ class _DashboardViewState extends State<DashboardView> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dashboard'),
-        centerTitle: true,
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: FutureBuilder<List<AcaraResponse>>(
-        future: futureAcara,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text(
-                'Tidak ada pertandingan yang ditemukan',
-                style: TextStyle(fontSize: 16),
-              ),
-            );
-          } else {
-            return ListView.builder(
-              padding: const EdgeInsets.all(10),
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, index) {
-                AcaraResponse acara = snapshot.data![index];
-                // ✅ Print URL gambar sebelum menampilkannya
-                print('Displaying Image: ${acara.image}');
-                return Card(
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      if (index == 0) {
+        _body = _buildAcaraBody(); // Set body ke halaman acara
+      } else if (index == 1) {
+        _body = const ProfileView(); // Set body ke halaman profil
+      }
+    });
+  }
+
+  // Widget untuk membangun body halaman Acara
+  Widget _buildAcaraBody() {
+    return FutureBuilder<List<AcaraResponse>>(
+      future: futureAcara,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              'Tidak ada pertandingan yang ditemukan',
+              style: TextStyle(fontSize: 16),
+            ),
+          );
+        } else {
+          return ListView.builder(
+            padding: const EdgeInsets.all(10),
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              AcaraResponse acara = snapshot.data![index];
+              // ✅ Print URL gambar sebelum menampilkannya
+              print('Displaying Image: ${acara.image}');
+              return InkWell( // Tambahkan InkWell di sini
+                onTap: () {
+                  Get.to(() => DetailAcaraView(acara: acara));
+                },
+                child: Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -100,10 +114,10 @@ class _DashboardViewState extends State<DashboardView> {
                           fit: BoxFit.cover,
                           errorBuilder:
                               (context, error, stackTrace) => const Icon(
-                                Icons.broken_image,
-                                size: 100,
-                                color: Colors.grey,
-                              ),
+                            Icons.broken_image,
+                            size: 100,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                       Expanded(
@@ -143,11 +157,39 @@ class _DashboardViewState extends State<DashboardView> {
                       ),
                     ],
                   ),
-                );
-              },
-            );
-          }
-        },
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('StadiGo'),
+        centerTitle: true,
+        backgroundColor: Colors.blueAccent,
+      ),
+      body: _body, // Gunakan _body sebagai body dari Scaffold
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event),
+            label: 'Acara',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blueAccent,
+        unselectedItemColor: Colors.grey,
+        onTap: _onItemTapped,
       ),
     );
   }
