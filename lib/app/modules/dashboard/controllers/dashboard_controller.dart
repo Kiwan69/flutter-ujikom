@@ -13,11 +13,11 @@ class DashboardController extends GetxController {
 
   final token = GetStorage().read('token');
 
-  // Deklarasikan TextEditingController di sini agar dapat digunakan secara global dalam controller
-  TextEditingController nameController = TextEditingController();
-  TextEditingController descriptionController = TextEditingController();
-  TextEditingController eventDateController = TextEditingController();
-  TextEditingController locationController = TextEditingController();
+  // // Deklarasikan TextEditingController di sini agar dapat digunakan secara global dalam controller
+  // TextEditingController nameController = TextEditingController();
+  // TextEditingController descriptionController = TextEditingController();
+  // TextEditingController eventDateController = TextEditingController();
+  // TextEditingController locationController = TextEditingController();
 
   // Mengambil event
 
@@ -78,12 +78,12 @@ void logOut() async {
     super.onReady();
   }
 
-  @override
-  void onClose() {
-    nameController.dispose();
-    descriptionController.dispose();
-    eventDateController.dispose();
-    locationController.dispose();
-    super.onClose();
-  }
+  // @override
+  // void onClose() {
+  //   nameController.dispose();
+  //   descriptionController.dispose();
+  //   eventDateController.dispose();
+  //   locationController.dispose();
+  //   super.onClose();
+  // }
 }

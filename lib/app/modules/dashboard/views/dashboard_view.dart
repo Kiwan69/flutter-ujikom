@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:project_ujikom/app/data/acara_response.dart';
 import 'package:project_ujikom/app/modules/dashboard/views/dashboard_detail_view.dart';
-import 'package:project_ujikom/app/modules/dashboard/views/profile_view.dart'; 
+import 'package:project_ujikom/app/modules/dashboard/views/profile_view.dart';
+import 'package:project_ujikom/models/tiket.dart';
 
 class DashboardView extends StatefulWidget {
   const DashboardView({super.key});
@@ -25,6 +26,21 @@ class _DashboardViewState extends State<DashboardView> {
     _body = _buildAcaraBody(); // Inisialisasi body dengan halaman acara
   }
 
+  Future<List<TiketResponse>> fetchTiket() async {
+    final response = await http.get(
+      Uri.parse('http://127.0.0.1:8000/api/tikets'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonResponse = json.decode(response.body);
+      return jsonResponse
+          .map<TiketResponse>((tiket) => TiketResponse.fromJson(tiket))
+          .toList();
+    } else {
+      throw Exception('Failed to load tiket');
+    }
+  }
+
   Future<List<AcaraResponse>> fetchAcara() async {
     final response = await http.get(
       Uri.parse('http://127.0.0.1:8000/api/acaras'),
@@ -40,7 +56,7 @@ class _DashboardViewState extends State<DashboardView> {
         print('Image URL: ${acara['image']}');
         // ✅ Gabungkan base URL dengan path gambar
         String baseUrl =
-            'http://127.0.0.1:8000/storage/acaras'; // Ganti dengan URL backend Anda jika berbeda
+            'http://127.0.0.1:8000/storage/public/acaras/'; // Ganti dengan URL backend Anda jika berbeda
         String fullImageUrl = '$baseUrl${acara['image']}';
 
         // ✅ Print URL gambar yang akan ditampilkan
@@ -58,11 +74,67 @@ class _DashboardViewState extends State<DashboardView> {
     setState(() {
       _selectedIndex = index;
       if (index == 0) {
-        _body = _buildAcaraBody(); // Set body ke halaman acara
+        _body = _buildAcaraBody();
       } else if (index == 1) {
-        _body = const ProfileView(); // Set body ke halaman profil
+        _body = _buildTiketBody(); // Tambahkan tampilan Tiket
+      } else if (index == 2) {
+        _body = const ProfileView();
       }
     });
+  }
+
+  Widget _buildTiketBody() {
+    return FutureBuilder<List<TiketResponse>>(
+      future: fetchTiket(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              'Tidak ada tiket tersedia',
+              style: TextStyle(fontSize: 16),
+            ),
+          );
+        } else {
+          return ListView.builder(
+            padding: const EdgeInsets.all(10),
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              TiketResponse tiket = snapshot.data![index];
+              return Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 5,
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Kategori: ${tiket.kategori}',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text('Harga: Rp ${tiket.harga.toStringAsFixed(0)}'),
+                      Text('Stok: ${tiket.stok}'),
+                      Text('Status: ${tiket.status}'),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        }
+      },
+    );
   }
 
   // Widget untuk membangun body halaman Acara
@@ -89,7 +161,8 @@ class _DashboardViewState extends State<DashboardView> {
               AcaraResponse acara = snapshot.data![index];
               // ✅ Print URL gambar sebelum menampilkannya
               print('Displaying Image: ${acara.image}');
-              return InkWell( // Tambahkan InkWell di sini
+              return InkWell(
+                // Tambahkan InkWell di sini
                 onTap: () {
                   Get.to(() => DetailAcaraView(acara: acara));
                 },
@@ -114,10 +187,10 @@ class _DashboardViewState extends State<DashboardView> {
                           fit: BoxFit.cover,
                           errorBuilder:
                               (context, error, stackTrace) => const Icon(
-                            Icons.broken_image,
-                            size: 100,
-                            color: Colors.grey,
-                          ),
+                                Icons.broken_image,
+                                size: 100,
+                                color: Colors.grey,
+                              ),
                         ),
                       ),
                       Expanded(
@@ -177,14 +250,12 @@ class _DashboardViewState extends State<DashboardView> {
       body: _body, // Gunakan _body sebagai body dari Scaffold
       bottomNavigationBar: BottomNavigationBar(
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.event), label: 'Acara'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.event),
-            label: 'Acara',
+            icon: Icon(Icons.confirmation_num),
+            label: 'Tiket',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blueAccent,
